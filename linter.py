@@ -2,8 +2,8 @@ import syntax
 import re
 from os.path import abspath, exists
 
+# Holds organized sections of code
 blocks = []
-
 
 def awake():
     injest()
@@ -18,16 +18,34 @@ def injest():
 
     # Blocks consist of Class definition, class block, and function sub blocks
     content = content.split("{", 1)
-    blocks.append(content[0])
-    end_block = content[1].rsplit("}", 1)
-    blocks.append(end_block[0])
+    end_block = content[1].rsplit("}", 1)[0]
+    blocks.append([content[0]])
 
-    class_definition(blocks[0])
-    function_definitions(blocks[1])
+    class_definition(blocks[0][0])
+    function_definitions(end_block, 1)
+    for x in blocks:
+        print(x)
 
-def function_definitions(content):
-    print(content)
+# Recursion over methods inside the class
+def function_definitions(content, times):
+    #print("TRIED" +str(times) + repr(content))
+    if not content.isspace():
+        content = content.split("{", 1)
+        definition = content[0]
+        body = content[1].split("}", 1)
+        content = body[1]
+        body = body[0]
 
+        # Put lines in block
+        blocks.append([definition, body])
+        # Recursion over all methods
+        function_definitions(content, times + 1)
+
+        #print("definition" + definition)
+        #print("body" + body)
+        #print("content" + content)
+
+# Class definition validation
 def class_definition(content):
     def first_order_optional(line):
         return line.startswith(syntax.first_order_optional)
