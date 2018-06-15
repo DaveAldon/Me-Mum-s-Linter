@@ -3,7 +3,9 @@ import re
 from os.path import abspath, exists
 
 # Holds organized sections of code
+class_structure = []
 blocks = []
+block_structure = [{}]
 
 def awake():
     injest()
@@ -15,38 +17,58 @@ def injest():
     if exists(f_path):
         with open(f_path) as f:
             content = f.read()
+    content = remove_comments(content)
 
     # Blocks consist of Class definition, class block, and function sub blocks
-    content = content.split("{", 1)
-    end_block = content[1].rsplit("}", 1)[0]
-    blocks.append([content[0]])
+    content = content.split("ClassMethod")
+    #end_block = content[1].rsplit("}", 1)[0]
+    class_structure.append([content[0]])
 
-    class_definition(blocks[0][0])
-    function_definitions(end_block, 1)
+    build_class(class_structure[0][0])
+    for x in content[1:]:
+        build_functions(x)
     for x in blocks:
-        print(x)
+        parse_function(x)
+
+def parse_function(content):
+    try:
+        definition = content[0].split()
+        body = content[1]
+
+        method_name = re.compile(syntax.method_name)
+        method_verb = re.compile(syntax.method_verb)
+        method_type = re.compile(syntax.method_type)
+
+        if len(definition) > 3: raise Exception()
+        if not method_name.match(definition[0]): print("Bad Method Name")
+        if not method_verb.match(definition[1]): print("Bad Method Verb")
+        if not method_type.match(definition[2]): print("Bad Method Type")
+    except:
+        print("Invalid ClassMethod Definition")
+
+    #TODO: Handle function body validation
+
+# Remove commented lines for now, we don't want to deal with them currently
+def remove_comments(content):
+    content = content.split("\n")
+    for x in content:
+        if x.startswith("//"):
+            content.remove(x)
+    return "\n".join(content)
 
 # Recursion over methods inside the class
-def function_definitions(content, times):
+def build_functions(content):
     #print("TRIED" +str(times) + repr(content))
     if not content.isspace():
         content = content.split("{", 1)
         definition = content[0]
-        body = content[1].split("}", 1)
-        content = body[1]
-        body = body[0]
+        body = content[1]
 
         # Put lines in block
         blocks.append([definition, body])
-        # Recursion over all methods
-        function_definitions(content, times + 1)
-
-        #print("definition" + definition)
-        #print("body" + body)
-        #print("content" + content)
 
 # Class definition validation
-def class_definition(content):
+def build_class(content):
     def first_order_optional(line):
         return line.startswith(syntax.first_order_optional)
     def first_order_required(line):
@@ -60,7 +82,7 @@ def class_definition(content):
             line = line.split()
             pattern = re.compile(syntax.class_definition)
             if not pattern.match(line[1]): print("failed to match definition")
-            if len(line) > 1:
+            if len(line) > 2:
                 if line[2].startswith('Extends'):
                     pattern = re.compile(syntax.class_extension)
                     if not pattern.match(line[3]): print("failed to match extension")

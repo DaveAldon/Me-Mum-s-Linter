@@ -3,9 +3,13 @@ Class User.SQLBuilder Extends %CSP.Page [ System = 4 ] {
 
 ClassMethod X() as %String {
     write "qqwew"
+    if blah {
+    }
+    if blah {
+    }
 }
 
-ClassMethod Y() as %Status {
+ClassMethod sf() as %Status {
     write "asdsd"
 }
 
