@@ -1,7 +1,7 @@
 /// aushdaskhdjs
 Class User.SQLBuilder Extends %CSP.Page [ System = 4 ] {
 
-ClassMethod X() as %String {
+ClassMethod X(pVal,pV) as %String {
     write "qqwew"
     if blah {
     }

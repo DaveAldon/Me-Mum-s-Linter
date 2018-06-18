@@ -30,6 +30,8 @@ def injest():
     for x in blocks:
         parse_function(x)
 
+    print("Found " + str(len(blocks)) + " functions")
+
 def parse_function(content):
     try:
         definition = content[0].split()
@@ -40,11 +42,17 @@ def parse_function(content):
         method_type = re.compile(syntax.method_type)
 
         if len(definition) > 3: raise Exception()
-        if not method_name.match(definition[0]): print("Bad Method Name")
+        if not method_name.match(definition[0]):
+            print("Bad Method Name")
+            parameters = definition[0].split("(")[1]
+            if len(parameters) > 1:
+                print(parameters)
+                method_parameters = re.compile(syntax.method_parameters)
+                if not method_parameters.match(parameters): print("Bad Parameters")
         if not method_verb.match(definition[1]): print("Bad Method Verb")
         if not method_type.match(definition[2]): print("Bad Method Type")
     except:
-        print("Invalid ClassMethod Definition")
+        print("Malformed ClassMethod Definition")
 
     #TODO: Handle function body validation
 

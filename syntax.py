@@ -10,6 +10,7 @@ class_extension = "(\%)?(\w+(\.?\w+)*)[^\.\%]$"
 # Extends %CSP.Page [ System = 4 ]
 
 # Method_name doesn't handle numbers in function name
-method_name = "\w+\(((\w+)?(\,\s?\w+)*)\)"
+method_name = "\w+\((p\w+(\,\s?p\w+)*)?\)"
 method_verb = "as"
 method_type = "\%[A-Z](\w+)*"
+method_parameters = "p\w+(\,\s?p\w+)*\)"
