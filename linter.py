@@ -33,6 +33,7 @@ def injest():
     print("Found " + str(len(blocks)) + " functions")
 
 def parse_function(content):
+    # Function definition parsing
     try:
         definition = content[0].split()
         body = content[1]
@@ -44,29 +45,52 @@ def parse_function(content):
         if len(definition) > 3: raise Exception()
         if not method_name.match(definition[0]):
             print("Bad Method Name")
-            parameters = definition[0].split("(")[1]
-            if len(parameters) > 1:
-                print(parameters)
+            params = definition[0].split("(")[1]
+            if len(params) > 1:
+                print(params)
                 method_parameters = re.compile(syntax.method_parameters)
-                if not method_parameters.match(parameters): print("Bad Parameters")
+                if not method_parameters.match(params): print("Bad Parameters")
         if not method_verb.match(definition[1]): print("Bad Method Verb")
         if not method_type.match(definition[2]): print("Bad Method Type")
     except:
         print("Malformed ClassMethod Definition")
+        return
 
-    #TODO: Handle function body validation
+    # Good Form Function Definition parsing
+    try:
+        # Get the parameters from the function definition into a list
+        parameters = definition[0].split("(")[1][:-1].split(",")
+        return_type = definition[-1]
+        function_name = definition[0].split("(")[0]
+    except:
+        print("Malformed ClassMethod Definition")
+        return
 
-# Remove commented lines for now, we don't want to deal with them currently
+    # Function Body Parsing
+    try:
+        # Check for unused parameters in the function definition
+        for x in parameters:
+            if x not in body: print("Unused parameter " + x)
+
+        #TODO: Comprehensive syntax checking for common commands
+
+    except:
+        print("Malformed ClassMethod Body")
+        return
+
+# Removes inline comments and commented lines
 def remove_comments(content):
     content = content.split("\n")
+    new_content = []
     for x in content:
-        if x.startswith("//"):
-            content.remove(x)
-    return "\n".join(content)
+        if x.startswith(syntax.comment): continue
+        if syntax.comment in x:
+            x = x.split(syntax.comment)[0]
+        new_content.append(x)
+    return "\n".join(new_content)
 
 # Recursion over methods inside the class
 def build_functions(content):
-    #print("TRIED" +str(times) + repr(content))
     if not content.isspace():
         content = content.split("{", 1)
         definition = content[0]
@@ -78,9 +102,9 @@ def build_functions(content):
 # Class definition validation
 def build_class(content):
     def first_order_optional(line):
-        return line.startswith(syntax.first_order_optional)
+        return line.startswith(syntax.class_comment)
     def first_order_required(line):
-        return line.startswith(tuple(syntax.first_order))
+        return line.startswith(tuple(syntax.class_declaration))
 
     # Default states of blocks. Set to true once found
     content = content.split('\n')
