@@ -72,6 +72,20 @@ def parse_function(content):
         for x in parameters:
             if x not in body: print("Unused parameter " + x)
 
+        commands = re.split("(write|set|if)", body, 999999)
+        command = ""
+        for x in commands:
+            x = x.replace("\n", "")
+            if x.isspace():
+                continue
+            if x in syntax.verbs:
+                command = x
+                continue
+            verb = re.compile(syntax.verbs[command])
+            if not verb.match(command + x): print("Bad " + command)
+            else: print("Good " + command)
+
+
         #TODO: Comprehensive syntax checking for common commands
 
     except:

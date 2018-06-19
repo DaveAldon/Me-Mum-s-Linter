@@ -13,3 +13,8 @@ method_name = "\w+\((p\w+(\,\s?p\w+)*)?\)"
 method_verb = "as"
 method_type = "\%[A-Z](\w+)*"
 method_parameters = "p\w+(\,\s?p\w+)*\)"
+
+verbs = {"write": "write \S+( \S+)*",
+         "set": "set\s.+=.+",
+         "if": "if \S+\s?(|=\s?\S+)\s?\{.+"
+        }

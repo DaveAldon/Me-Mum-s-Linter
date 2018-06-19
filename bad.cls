@@ -4,6 +4,7 @@ Class User.SQLBuilder Extends %CSP.Page [ System = 4 ] {
 ClassMethod X(pVal,pVff) as %String {
     write pVal //sdsdsd pVff
     if blah {
+        write "hello"
     }
     if blah {
     }
